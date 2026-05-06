@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #fff;
+    color: #111;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  nav {
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+  }
+
+  .nav-name { font-weight: 500; font-size: 15px; }
+
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a { font-size: 14px; color: #888; transition: color 0.2s; }
+  .nav-links a:hover { color: #111; }
+
+  .hero {
+    padding: 6rem 3rem 5rem;
+    max-width: 700px;
+  }
+
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: #aaa;
+    letter-spacing: 0.08em;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 strong { font-weight: 500; }
+
+  .hero p {
+    font-size: 16px;
+    color: #666;
+    max-width: 480px;
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #888;
+    border: 1px solid #ddd;
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+
+  hr { border: none; border-top: 1px solid #eee; margin: 0 3rem; }
+
+  section { padding: 4rem 3rem; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #aaa;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .about-text p {
+    color: #555;
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+  .about-text p:last-child { margin-bottom: 0; }
+
+  .about-facts { display: flex; flex-direction: column; gap: 0; }
+
+  .fact {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+  }
+  .fact:last-child { border-bottom: none; }
+
+  .fact-label { color: #aaa; font-size: 11px; font-family: 'DM Mono', monospace; }
+  .fact-value { color: #111; font-weight: 500; }
+
+  .projects-list { display: flex; flex-direction: column; }
+
+  .project-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid #eee;
+    transition: opacity 0.2s;
+    cursor: pointer;
+  }
+  .project-item:first-child { border-top: 1px solid #eee; }
+  .project-item:hover { opacity: 0.5; }
+
+  .project-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #ccc;
+    margin-bottom: 0.5rem;
+  }
+
+  .project-name { font-size: 1.15rem; font-weight: 500; margin-bottom: 0.4rem; }
+
+  .project-desc { font-size: 14px; color: #888; line-height: 1.6; max-width: 520px; }
+
+  .project-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.75rem; }
+
+  .project-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #aaa;
+    background: #f5f5f5;
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+
+  .project-arrow {
+    font-size: 1.1rem;
+    color: #ccc;
+    transition: color 0.2s, transform 0.2s;
+  }
+  .project-item:hover .project-arrow { color: #111; transform: translate(3px, -3px); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0 2rem;
+  }
+
+  .skill-item {
+    padding: 1.5rem 0;
+    border-top: 1px solid #eee;
+  }
+
+  .skill-name { font-weight: 500; font-size: 14px; margin-bottom: 0.4rem; }
+  .skill-desc { font-size: 13px; color: #aaa; line-height: 1.6; }
+
+  .contact-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .contact-inner h2 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .contact-inner h2 strong { font-weight: 500; }
+
+  .contact-links { display: flex; flex-direction: column; gap: 0.75rem; text-align: right; }
+
+  .contact-link {
+    font-size: 14px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-end;
+    transition: color 0.2s;
+  }
+  .contact-link:hover { color: #111; }
+
+  footer {
+    padding: 2rem 3rem;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #ccc;
+    font-family: 'DM Mono', monospace;
+  }
+
+  @media (max-width: 700px) {
+    nav, section, .hero { padding-left: 1.5rem; padding-right: 1.5rem; }
+    hr { margin: 0 1.5rem; }
+    footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .skills-grid { grid-template-columns: 1fr 1fr; }
+    .contact-inner { flex-direction: column; align-items: flex-start; }
+    .contact-links { text-align: left; }
+    .contact-link { justify-content: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-name">Portfolio</span>
+  <div class="nav-links">
+    <a href="#about">À propos</a>
+    <a href="#projects">Projets</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">— dev@debian13 ~</div>
+  <h1>Co-fondateur &amp;<br><strong>Développeur Linux</strong></h1>
+  <p>Co-fondateur de roblactu.fr · Développeur Debian 13 Linux · Membre de la Linux Foundation · Passionné d'open source.</p>
+  <div class="hero-tags">
+    <span class="tag">Debian 13</span>
+    <span class="tag">Linux Foundation</span>
+    <span class="tag">roblactu.fr</span>
+    <span class="tag">Open Source</span>
+    <span class="tag">Bash</span>
+  </div>
+</div>
+
+<hr>
+
+<section id="about">
+  <div class="section-label">À propos</div>
+  <div class="about-grid">
+    <div class="about-text">
+      <p>Je suis co-fondateur de <strong>roblactu.fr</strong>, un média français dédié à l'actualité Roblox. Développeur Linux au quotidien, je travaille exclusivement sous <strong>Debian 13</strong>.</p>
+      <p>Membre de la <strong>Linux Foundation</strong>, je m'implique activement dans l'écosystème open source — du noyau Linux aux outils d'infrastructure.</p>
+      <p>Ma philosophie : des outils libres, des systèmes robustes, du code propre.</p>
+    </div>
+    <div class="about-facts">
+      <div class="fact">
+        <span class="fact-label">rôle</span>
+        <span class="fact-value">Co-fondateur & Développeur</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">projet</span>
+        <span class="fact-value">roblactu.fr</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">système</span>
+        <span class="fact-value">Debian 13 Linux</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">certification</span>
+        <span class="fact-value">Linux Foundation</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">disponible</span>
+        <span class="fact-value">Oui</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<section id="projects">
+  <div class="section-label">Projets</div>
+  <div class="projects-list">
+
+    <a class="project-item" href="https://roblactu.fr" target="_blank">
+      <div>
+        <div class="project-num">01</div>
+        <div class="project-name">roblactu.fr</div>
+        <div class="project-desc">Média français dédié à l'actualité de l'univers Roblox. Co-fondé et développé de zéro, de l'infra serveur Debian à l'interface utilisateur.</div>
+        <div class="project-tags">
+          <span class="project-tag">Media Web</span>
+          <span class="project-tag">Full Stack</span>
+          <span class="project-tag">Debian</span>
+          <span class="project-tag">Roblox</span>
+        </div>
+      </div>
+      <span class="project-arrow">↗</span>
+    </a>
+
+    <a class="project-item" href="https://www.linuxfoundation.org" target="_blank">
+      <div>
+        <div class="project-num">02</div>
+        <div class="project-name">Développeur Debian 13</div>
+        <div class="project-desc">Développeur Linux reconnu par la Linux Foundation. Spécialisé dans l'administration Debian 13, le scripting avancé, le packaging et le déploiement d'infrastructure open source.</div>
+        <div class="project-tags">
+          <span class="project-tag">Linux Foundation</span>
+          <span class="project-tag">Debian 13</span>
+          <span class="project-tag">Kernel Linux</span>
+          <span class="project-tag">Sysadmin</span>
+          <span class="project-tag">Open Source</span>
+        </div>
+      </div>
+      <span class="project-arrow">↗</span>
+    </a>
+
+  </div>
+</section>
+
+<hr>
+
+<section id="skills">
+  <div class="section-label">Compétences</div>
+  <div class="skills-grid">
+    <div class="skill-item">
+      <div class="skill-name">Debian / Linux</div>
+      <div class="skill-desc">Admin système, APT, configuration avancée, environnements serveurs.</div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">Bash / Shell</div>
+      <div class="skill-desc">Scripts, automatisation, déploiement, outils CLI personnalisés.</div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">Web & Frontend</div>
+      <div class="skill-desc">HTML, CSS, JavaScript. Interfaces pour médias en ligne.</div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">Infra & Réseau</div>
+      <div class="skill-desc">Nginx, SSH, DNS, pare-feu, hébergement et configuration.</div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">Sécurité Linux</div>
+      <div class="skill-desc">Hardening, droits, AppArmor, logs, bonnes pratiques.</div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">Roblox / Gaming</div>
+      <div class="skill-desc">Écosystème Roblox, actualité gaming, contenu communautaire.</div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<section id="contact">
+  <div class="section-label">Contact</div>
+  <div class="contact-inner">
+    <h2>Travaillons<br><strong>ensemble.</strong></h2>
+    <div class="contact-links">
+      <a class="contact-link" href="https://roblactu.fr" target="_blank">roblactu.fr ↗</a>
+      <a class="contact-link" href="mailto:contact@roblactu.fr">contact@roblactu.fr ↗</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2025</span>
+  <span>Co-fondateur roblactu.fr · Debian 13 Linux</span>
+</footer>
+
+<script>
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+</script>
+
+</body>
+</html>
