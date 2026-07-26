@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Portfolio — Développeur Debian 13 Linux, membre de la Linux Foundation.">
-<title>Portfolio</title>
+<title>portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -361,6 +361,31 @@
 @media (pointer: coarse){
   #cursorDot, #cursorRing{ display:none; }
 }
+
+/* ---------- clavier mécanique : shake du terminal à chaque frappe ---------- */
+.term-window.kb-shake{ animation:kb-shake .12s linear; }
+@keyframes kb-shake{
+  0%{ transform:translate(0,0); }
+  25%{ transform:translate(-1.5px,1px); }
+  50%{ transform:translate(1.5px,-1px); }
+  75%{ transform:translate(-1px,-1px); }
+  100%{ transform:translate(0,0); }
+}
+
+/* ---------- particules qui suivent le curseur ---------- */
+.cursor-particle{
+  position:fixed; width:4px; height:4px; border-radius:50%; pointer-events:none; z-index:997;
+  transform:translate(-50%,-50%);
+  animation:particle-fade .7s ease-out forwards;
+}
+@keyframes particle-fade{
+  to{ transform:translate(-50%,-50%) translateY(-26px) scale(.3); opacity:0; }
+}
+
+/* ---------- curseur clignotant pour l'effet machine à écrire ---------- */
+.project-desc.typing::after{
+  content:'▌'; color:var(--accent); margin-left:2px; animation:blink 1s step-end infinite;
+}
 </style>
 </head>
 <body>
@@ -378,7 +403,9 @@
       <path d="M16 4c-4 3-4 9 0 12s4 9 0 12" stroke="#ff2d55" stroke-width="1.4" stroke-linecap="round"/>
       <circle cx="16" cy="16" r="2" fill="#ff2d55"/>
     </svg>
-    <span class="brand-name"><span class="p1"></span>portfolio<span class="p2"></span></span>
+    <span class="brand-name"><span class="p1"></span>portfolio<span class="p2">
+      +-
+    </span></span>
   </div>
   <div class="nav-links">
     <a href="#about">about</a>
@@ -440,7 +467,7 @@
             <div class="row"><span class="k">uptime</span><span class="v" id="nfUptime">calcul…</span></div>
             <div class="row"><span class="k">statut</span><span class="v" style="color:var(--ok)">disponible</span></div>
             <div class="swatches">
-              <span style="background:#ff2d2d"></span><span style="background:#34e5ff"></span><span style="background:#3ddc84"></span><span style="background:#f1f3f7"></span><span style="background:#5c6470"></span>
+              <span style="background:#ff2d55"></span><span style="background:#34e5ff"></span><span style="background:#3ddc84"></span><span style="background:#f1f3f7"></span><span style="background:#5c6470"></span>
             </div>
           </div>
         </div>
@@ -539,7 +566,7 @@
     <div class="contact-inner reveal">
       <h2>Travaillons<br><strong>ensemble.</strong></h2>
       <div class="contact-links">
-        <a class="contact-link" href="mailto:editeurlaruelle@proton.me">contact@roblactu.fr ↗</a>
+        <a class="contact-link" href="mailto:editeurlaruelle@proton.me">editeurlaruelle@proton.me ↗</a>
         <a class="contact-link" href="https://www.linuxfoundation.org" target="_blank" rel="noopener">linuxfoundation.org ↗</a>
       </div>
     </div>
@@ -547,7 +574,7 @@
 </main>
 
 <footer>
-  <span>© 2026 — portfolio</span>
+  <span>© 2026 — root@portfolio</span>
   <span>Debian 13 Linux · Linux Foundation</span>
 </footer>
 
@@ -806,6 +833,101 @@
     el.addEventListener('mouseenter', () => ring.classList.add('hover'));
     el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
   });
+})();
+
+//clavier mecanique : petit "clic" sonore + micro-secousse du terminal à chaque frappe
+(function(){
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const termScreen = document.getElementById('termScreen');
+  const termWindow = document.querySelector('.term-window');
+  if(!termScreen || !termWindow) return;
+
+  let audioCtx = null;
+  function playClick(){
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = 650 + Math.random() * 350; // léger aléatoire pour un son plus "mécanique"
+      gain.gain.value = 0.05;
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.045);
+      osc.stop(audioCtx.currentTime + 0.05);
+    }catch(e){ /* audio non disponible, on ignore */ }
+  }
+
+  function shake(){
+    if(reduceMotion) return;
+    termWindow.classList.remove('kb-shake');
+    void termWindow.offsetWidth; // force reflow pour pouvoir relancer l'animation
+    termWindow.classList.add('kb-shake');
+  }
+
+  // délégation d'évènements : #termInput est recréé à chaque commande, donc on écoute sur le parent
+  termScreen.addEventListener('keydown', (e)=>{
+    if(e.target && e.target.id === 'termInput' && e.key.length === 1){
+      playClick();
+      shake();
+    }
+  });
+})();
+
+//particules qui suivent le curseur
+(function(){
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = window.matchMedia('(pointer: fine)').matches;
+  if(!fine || reduceMotion) return;
+
+  let last = 0;
+  window.addEventListener('mousemove', (e)=>{
+    const now = Date.now();
+    if(now - last < 45) return; // on limite le nombre de particules générées
+    last = now;
+    const p = document.createElement('div');
+    p.className = 'cursor-particle';
+    p.style.left = e.clientX + 'px';
+    p.style.top = e.clientY + 'px';
+    p.style.background = Math.random() > 0.5 ? '#ff2d55' : '#34e5ff';
+    document.body.appendChild(p);
+    setTimeout(()=> p.remove(), 700);
+  });
+})();
+
+//effet machine a ecrire sur les descriptions de projets au scroll
+(function(){
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const descs = document.querySelectorAll('.project-desc');
+
+  descs.forEach(el=>{
+    el.dataset.full = el.textContent;
+    if(!reduceMotion) el.textContent = '';
+  });
+
+  if(reduceMotion || !('IntersectionObserver' in window)) return;
+
+  function typeText(el, text){
+    el.classList.add('typing');
+    let i = 0;
+    (function step(){
+      el.textContent = text.slice(0, i);
+      i++;
+      if(i <= text.length){ setTimeout(step, 14); }
+      else { el.classList.remove('typing'); }
+    })();
+  }
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        typeText(en.target, en.target.dataset.full);
+        io.unobserve(en.target);
+      }
+    });
+  }, {threshold:.4});
+
+  descs.forEach(el=> io.observe(el));
 })();
 </script>
 
